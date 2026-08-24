@@ -1,0 +1,7 @@
+/* app.js - Frontend JavaScript */
+let selD="1day";
+function selDur(e){document.querySelectorAll(".db").forEach(b=>b.classList.remove("act"));e.classList.add("act");selD=e.dataset.d}
+function showR(id,ok,msg){const b=document.getElementById(id);b.style.display="block";b.className="rb "+(ok?"ok":"er");b.innerHTML=msg}
+function checkKey(){const k=document.getElementById("ck").value.trim();if(!k)return;fetch("/check?key="+encodeURIComponent(k),{headers:{"Accept":"application/json","X-Requested-With":"XMLHttpRequest"}}).then(r=>r.json()).then(d=>{showR("ckR",d.status==="success",(d.status==="success"?"✅ "+d.message+"<br>⏰ "+(d.expiry||"Vĩnh viễn"):"❌ "+d.message))}).catch(()=>showR("ckR",false,"❌ Lỗi kết nối"))}
+function getKey(){fetch("/getkey?duration="+selD,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json","X-Requested-With":"XMLHttpRequest"}}).then(r=>r.json()).then(d=>{showR("gkR",d.status==="success"&&d.bypass_url,"🔗 <a href=\""+d.bypass_url+"\" target=\"_blank\" style=\"color:var(--p)\">Bấm vào đây để vượt link</a>: "+(d.message||"Lỗi"))}).catch(()=>showR("gkR",false,"❌ Lỗi kết nối"))}
+function loadNotify(){fetch("/api/notifications").then(r=>r.json()).then(d=>{if(d.status==="success"&&d.notifications.length){const a=document.getElementById("notifyArea");d.notifications.slice(0,3).forEach(n=>{a.innerHTML+='<div class="nb '+n.type+'"><div class="nt"><i class="fa-solid fa-bell"></i> '+n.title+'</div><div class="nm">'+n.message+'</div></div>'})}})}
